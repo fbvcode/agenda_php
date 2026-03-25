@@ -13,7 +13,6 @@
 body {
     margin: 0;
     background-color: #f0f0f0;
-    font-family: 'Port Lligat Slab', serif;
 }
 
 header {
@@ -114,4 +113,10 @@ button:hover {
 
 button.eliminar:hover {
     color: #ff4d4d;
+}
+
+/*NO CONTACTOS*/
+p.no-contactos {
+    text-align: center;
+    color: #2c2c2c;
 }

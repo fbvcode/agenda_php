@@ -12,7 +12,7 @@
     <header>
         <h1 class="titulo_header">Agenda de Contactos</h1>
         <nav>
-            <a class="link_header" href="añadir.php">Añadir</a>
+            <button id="boton-add" class="link_header" href="añadir.php">Añadir</button>
             <a class="link_header" href="index.php">Contactos</a>
         </nav>
 
@@ -26,13 +26,17 @@
 
 
     if ($resultado->num_rows > 0) {
-        echo "<table> 
-        <tr> <!--fila de encabezado-->
+        echo "<table id='agenda'> 
+        <thead> <!--fila de encabezado-->
+        <tr> 
             <th>Nombre</th><!--columnas de encabezado-->
             <th>Teléfono</th>
             <th>Email</th>
             <th></th>
-        </tr>";
+        </tr>
+        </thead>
+        
+        <tbody id='agenda-body'> ";
         while ($fila = $resultado->fetch_assoc()) {
             echo "<tr>"; //fila
             echo "<td>" . $fila["nombre"] . "</td>"; //columna
@@ -56,12 +60,13 @@
             echo "</td>";
             echo "</tr>";
         }
-        echo "</table>";
+        echo "</tbody>
+        </table>";
     } else {
-        echo "<p>No hay contactos en la agenda.</p>";
+        echo "<p class='no-contactos'>No hay contactos en la agenda.</p>";
     }
     ?>
-
+<script src="agenda.js"></script>
 </body>
 
 </html>
