@@ -34,8 +34,14 @@ $contacto=getContacto($id_contacto);
     <title>Agenda</title>
 </head>
 <body>
+    <header>
+        <h1 class="titulo_header">Agenda de Contactos</h1>
+        <nav>
+            <a class="link_header" href="añadir.php">Añadir</a>
+            <a class="link_header" href="index.php">Contactos</a>
+        </nav>
 
-<h2>Editar contacto</h2>
+    </header>
 
 <form action="actualizar.php" method="post">
 

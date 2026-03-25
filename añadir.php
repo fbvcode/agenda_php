@@ -4,12 +4,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Añadir Contacto</title>
+        <link rel="stylesheet" href="estilos_agenda.css">
+    <title>Agenda</title>
 </head>
 
 <body>
 
     <body>
+            <header>
+        <h1 class="titulo_header">Agenda de Contactos</h1>
+        <nav>
+            <a class="link_header" href="añadir.php">Añadir</a>
+            <a class="link_header" href="index.php">Contactos</a>
+        </nav>
+
+    </header>
         <form action="guardar.php" method="post">
 
             <label for="nombre">Nombre:</label>
