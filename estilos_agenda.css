@@ -58,6 +58,7 @@ table {
     overflow: hidden;
     border-radius: 5px;
     /*box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);*/
+    table-layout: fixed;
 
 
 }
@@ -75,13 +76,22 @@ th {
 
 td {
     border-bottom: 1px solid #ddd;
+    transition: border-color 0.4s ease;
+}
+
+td input {
+    width: 100%;
+    padding: 2px;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: inherit;
 }
 
 td.acciones {
     display: flex;
     justify-content: flex-end;
 }
-td form {
+td form, td>button  {
     display: inline;
     margin-left: 10px;
 }
@@ -113,6 +123,26 @@ button:hover {
 
 button.eliminar:hover {
     color: #ff4d4d;
+}
+
+/*BOTON CANCELAR NUEVO CONTACTO*/
+button.cancelar-nuevo:hover {
+    color: #ff4d4d;
+}
+
+/*CANCELAR NUEVO CONTACTO O ELIMINAR*/
+/* Estado normal de la fila */
+.fila-nueva, .fila-eliminar {
+    transition: opacity 0.4s ease, height 0.4s ease, padding 0.4s ease;
+}
+
+/* Estado al eliminar */
+.fila-nueva.ocultar, .fila-eliminar.ocultar {
+    opacity: 0;
+    height: 0;
+    padding: 0;
+    overflow: hidden;
+    border-bottom-color: transparent; /* Evita que quede la línea al eliminar */
 }
 
 /*NO CONTACTOS*/
