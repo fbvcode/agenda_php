@@ -63,6 +63,17 @@ table {
 
 }
 
+#agenda {
+    transition: opacity 0.4s ease, max-height 0.4s ease;
+    max-height: 1000px; /* lo suficiente para la tabla */
+}
+
+#agenda.agenda-vacia {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+}
+
 th, td {
     padding: 8px;
     text-align: left;

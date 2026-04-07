@@ -24,9 +24,11 @@
     $sql = "SELECT * FROM contactos";
     $resultado = $conexion->query($sql);
 
+//Si no hay contactos, le añadimos la clase "agenda-vacia" a la tabla
+$hayContactos = ($resultado->num_rows > 0);
+$claseTabla = $hayContactos ? "" : "agenda-vacia";
 
-    if ($resultado->num_rows > 0) {
-        echo "<table id='agenda'> 
+    echo "<table id='agenda' class='$hayContactos'> 
         <thead> <!--fila de encabezado-->
         <tr> 
             <th>Nombre</th><!--columnas de encabezado-->
@@ -37,18 +39,22 @@
         </thead>
         
         <tbody id='agenda-body'> ";
+
+
+    //Si hay contactos, pintamos las filas
+    if ($resultado->num_rows > 0) {
         while ($fila = $resultado->fetch_assoc()) {
             echo "<tr>"; //fila
-            echo "<td>" . $fila["nombre"] . "</td>"; //columna
-            echo "<td>" . $fila["telefono"] . "</td>";
-            echo "<td>" . $fila["email"] . "</td>";
+            echo "<td class='celda-nombre'>" . $fila["nombre"] . "</td>"; //columna
+            echo "<td class='celda-telefono'>" . $fila["telefono"] . "</td>";
+            echo "<td class='celda-email'>" . $fila["email"] . "</td>";
             echo "<td class='acciones'>"; //Columna de acciones
 
 
             //Botón para editar contacto
             echo "<form action='editar.php' method='post'>"; //Formulario para editar contacto
             echo "<input type='hidden' name='id' value='" . $fila["id"] . "'>"; //Campo oculto con el ID del contacto
-            echo "<button type='submit'>Editar</button>"; //Botón para editar contacto
+            echo "<button class='editar' type='submit'>Editar</button>"; //Botón para editar contacto
             echo "</form>";
             //Botón para eliminar contacto
             echo "<form action='eliminar.php' method='post'>"; //Formulario para eliminar contacto
@@ -60,13 +66,17 @@
             echo "</td>";
             echo "</tr>";
         }
-        echo "</tbody>
+    }
+    echo "</tbody>
         </table>";
-    } else {
+
+    //Si no hay contactos, mostramos mensaje
+    if ($resultado->num_rows === 0) {
+
         echo "<p class='no-contactos'>No hay contactos en la agenda.</p>";
     }
     ?>
-<script src="agenda.js"></script>
+    <script src="agenda.js"></script>
 </body>
 
 </html>
