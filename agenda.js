@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <td><input type="text" placeholder="Nombre" class="input-nombre"></td>
             <td><input type="text" placeholder="Teléfono" class="input-telefono"></td>
             <td><input type="text" placeholder="Email" class="input-email"></td>
-            <td class="acciones">
+            <td class="celda-acciones">
                 <button class="guardar-nuevo">Guardar</button> 
                 <button class="cancelar-nuevo">Cancelar</button>
             </td>
@@ -92,10 +92,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 <td class="celda-nombre">${nombre}</td>
                 <td class="celda-telefono">${telefono}</td>
                 <td class="celda-email">${email}</td>
-                <td class='acciones'>
+                <td class='celda-acciones'>
                     <form action='editar.php' method='POST'>
                         <input type='hidden' name='id' value='${datos.id}'>
-                        <button class='editar' type='submit'>Editar</button>
+                        <button class='editar' type='button'>Editar</button>
                     </form>
 
                     <form action='eliminar.php' method='POST'>
@@ -116,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
   haberse creado despues con js, por lo que escuchamos todo el body y luego comprobamos 
   si el click escuchado ha sido en el botón 'Editar' */
   document.getElementById("agenda-body").addEventListener("click", function (e){
-    const botonEditar= e.target.closest("button.editar");
+    const botonEditar= e.target.closest(".editar");
 
     if (!botonEditar) return;
 
@@ -129,6 +129,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const nombre = filaPulsada.querySelector(".celda-nombre").textContent;
     const telefono = filaPulsada.querySelector(".celda-telefono").textContent;
     const email = filaPulsada.querySelector(".celda-email").textContent;
+
+    filaPulsada.dataset.nombreOriginal = nombre;
+    filaPulsada.dataset.telefonoOriginal = telefono;
+    filaPulsada.dataset.emailOriginal = email;
+
+    //Reemplazamos el contenido por los inputs
+    filaPulsada.innerHTML = `
+    <td><input type="text" class="input-nombre" value="${nombre}"></td>
+    <td><input type="text" class="input-telefono" value="${telefono}"></td>
+    <td><input type="text" class="input-email" value="${email}"></td>
+    <td class="acciones">
+      <button class="guardar-editar">Guardar</button>
+      <button class="cancelar-editar">Cancelar</button>
+    </td>
+  `;
 
   })
 

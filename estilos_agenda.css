@@ -98,7 +98,7 @@ td input {
     font-size: inherit;
 }
 
-td.acciones {
+td.celda-acciones {
     display: flex;
     justify-content: flex-end;
 }

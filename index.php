@@ -28,7 +28,7 @@
 $hayContactos = ($resultado->num_rows > 0);
 $claseTabla = $hayContactos ? "" : "agenda-vacia";
 
-    echo "<table id='agenda' class='$hayContactos'> 
+    echo "<table id='agenda' class='$claseTabla'> 
         <thead> <!--fila de encabezado-->
         <tr> 
             <th>Nombre</th><!--columnas de encabezado-->
@@ -48,13 +48,13 @@ $claseTabla = $hayContactos ? "" : "agenda-vacia";
             echo "<td class='celda-nombre'>" . $fila["nombre"] . "</td>"; //columna
             echo "<td class='celda-telefono'>" . $fila["telefono"] . "</td>";
             echo "<td class='celda-email'>" . $fila["email"] . "</td>";
-            echo "<td class='acciones'>"; //Columna de acciones
+            echo "<td class='celda-acciones'>"; //Columna de acciones
 
 
             //Botón para editar contacto
             echo "<form action='editar.php' method='post'>"; //Formulario para editar contacto
             echo "<input type='hidden' name='id' value='" . $fila["id"] . "'>"; //Campo oculto con el ID del contacto
-            echo "<button class='editar' type='submit'>Editar</button>"; //Botón para editar contacto
+            echo "<button class='editar' type='button'>Editar</button>"; //Botón para editar contacto
             echo "</form>";
             //Botón para eliminar contacto
             echo "<form action='eliminar.php' method='post'>"; //Formulario para eliminar contacto
