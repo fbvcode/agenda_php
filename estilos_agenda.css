@@ -161,3 +161,7 @@ p.no-contactos {
     text-align: center;
     color: #2c2c2c;
 }
+
+.cancelar-editar:hover {
+    color:#ff4d4d
+}

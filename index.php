@@ -44,7 +44,7 @@ $claseTabla = $hayContactos ? "" : "agenda-vacia";
     //Si hay contactos, pintamos las filas
     if ($resultado->num_rows > 0) {
         while ($fila = $resultado->fetch_assoc()) {
-            echo "<tr>"; //fila
+            echo "<tr data-id='{$fila['id']}'>"; //fila
             echo "<td class='celda-nombre'>" . $fila["nombre"] . "</td>"; //columna
             echo "<td class='celda-telefono'>" . $fila["telefono"] . "</td>";
             echo "<td class='celda-email'>" . $fila["email"] . "</td>";

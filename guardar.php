@@ -1,9 +1,9 @@
 <?php
 include("conexion.php");
 
-$nombre = strtoupper($_POST['nombre']) ?? "";
-$telefono = strtoupper($_POST['telefono'] ?? "");
-$email = strtolower($_POST['email'] ?? "");
+$nombre = trim(strtoupper($_POST['nombre'])) ?? "";
+$telefono = trim(strtoupper($_POST['telefono']) ?? "");
+$email = trim(strtolower($_POST['email'])) ?? "";
 
 if($nombre === "") {
     echo json_encode(["ok" => false, "error" => "El nombre es obligatorio."]);
