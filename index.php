@@ -21,7 +21,7 @@
 
     <?php
     include("conexion.php");
-    $sql = "SELECT * FROM contactos";
+    $sql = "SELECT * FROM contactos ORDER BY nombre ASC";
     $resultado = $conexion->query($sql);
 
 //Si no hay contactos, le añadimos la clase "agenda-vacia" a la tabla
@@ -76,7 +76,7 @@ $claseTabla = $hayContactos ? "" : "agenda-vacia";
         echo "<p class='no-contactos'>No hay contactos en la agenda.</p>";
     }
     ?>
-    <script src="agenda.js"></script>
+    <script type="module" src="agenda.js"></script>
 </body>
 
 </html>

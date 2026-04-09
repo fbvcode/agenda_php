@@ -1,9 +1,10 @@
 <?php
 include("conexion.php");
+include("helpers.php"); //php con funciones para usar en todos
 
-$nombre = trim(strtoupper($_POST['nombre'])) ?? "";
-$telefono = trim(strtoupper($_POST['telefono']) ?? "");
-$email = trim(strtolower($_POST['email'])) ?? "";
+$nombre = normalizarTextoMayusculas($_POST['nombre']) ?? "";
+$telefono = normalizarTelefono($_POST['telefono']) ?? "";
+$email = normalizarTextoMinusculas($_POST['email']) ?? "";
 
 if($nombre === "") {
     echo json_encode(["ok" => false, "error" => "El nombre es obligatorio."]);

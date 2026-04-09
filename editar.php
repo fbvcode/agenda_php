@@ -1,6 +1,6 @@
 <?php
-
 include("conexion.php");
+include("helpers.php"); //php con funciones para usar en todos
 
 //Comprobamos que se ha enviado un ID de contacto para editar
 if(!isset($_POST['id'])) {
@@ -10,9 +10,9 @@ if(!isset($_POST['id'])) {
 
 //Metemos en variables los datos que recibimos
 $id = $_POST['id'];
-$nombre = $_POST['nombre'];
-$telefono = $_POST['telefono'];
-$email = $_POST['email'];
+$nombre = normalizarTextoMayusculas($_POST['nombre']);
+$telefono = normalizarTelefono($_POST['telefono']);
+$email = normalizarTextoMinusculas($_POST['email']);
 
 
 //Consulta para recuperar los datos del contacto a editar
@@ -26,5 +26,10 @@ if ($consulta->execute()){
 }else {
     echo "error";
 }
+
+$consulta-> close();
+$conexion-> close();
+
+exit();
 
 ?>

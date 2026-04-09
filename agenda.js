@@ -1,4 +1,13 @@
-console.log("✅ agenda.js cargado correctamente");
+//Importamos funciones del archivo helpers.js para no saturar este con funciones
+import {
+  normalizarTextoMayusculas,
+  normalizarTextoMinusculas,
+  normalizarTelefono,
+  telefonoValido,
+  emailValido,
+} from "./helpers.js";
+
+console.log("agenda.js cargado correctamente");
 
 document.addEventListener("DOMContentLoaded", () => {
   const btnAdd = document.getElementById("boton-add");
@@ -51,9 +60,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     //y le asignamos un evento click para guardar el nuevo contacto
     btnGuardar.addEventListener("click", async () => {
-      const nombre = newRow.querySelector(".input-nombre").value.trim();
-      const telefono = newRow.querySelector(".input-telefono").value.trim();
-      const email = newRow.querySelector(".input-email").value.trim();
+      const nombre = normalizarTextoMayusculas(
+        newRow.querySelector(".input-nombre").value.trim(),
+      );
+      const telefono = normalizarTelefono(
+        newRow.querySelector(".input-telefono").value.trim(),
+      );
+      const email = normalizarTextoMinusculas(
+        newRow.querySelector(".input-email").value.trim(),
+      );
 
       //El nombre es obligatorio
       if (!nombre) {
@@ -63,6 +78,16 @@ document.addEventListener("DOMContentLoaded", () => {
       //Al menos uno de los campos teléfono o email debe ser completado
       if (!telefono && !email) {
         alert("Debe proporcionar al menos un teléfono o un email.");
+        return;
+      }
+
+      if (telefono && !telefonoValido(telefono)) {
+        alert("El teléfono no tiene un formato válido.");
+        return;
+      }
+
+      if (email && !emailValido(email)) {
+        alert("El formato del email no es válido.");
         return;
       }
 
@@ -135,9 +160,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     //Guardamos la info que hay actualmente en la fila,
     // por si se cancela la edición, dejar los valores que estaban
-    const nombre = filaPulsada.querySelector(".celda-nombre").textContent;
-    const telefono = filaPulsada.querySelector(".celda-telefono").textContent;
-    const email = filaPulsada.querySelector(".celda-email").textContent;
+    const nombre = normalizarTextoMayusculas(
+      filaPulsada.querySelector(".celda-nombre").textContent,
+    );
+    const telefono = normalizarTelefono(
+      filaPulsada.querySelector(".celda-telefono").textContent,
+    );
+    const email = normalizarTextoMinusculas(
+      filaPulsada.querySelector(".celda-email").textContent,
+    );
 
     //
     filaPulsada.dataset.nombreOriginal = nombre;
@@ -166,9 +197,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const filaEditable = botonCancelar.closest("tr");
 
     // Recuperamos los valores originales
-    const nombre = filaEditable.dataset.nombreOriginal;
-    const telefono = filaEditable.dataset.telefonoOriginal;
-    const email = filaEditable.dataset.emailOriginal;
+    const nombre = normalizarTextoMayusculas(
+      filaEditable.dataset.nombreOriginal,
+    );
+    const telefono = normalizarTelefono(filaEditable.dataset.telefonoOriginal);
+    const email = normalizarTextoMinusculas(filaEditable.dataset.emailOriginal);
 
     // Restauramos la fila editable a modo lectura
     filaEditable.innerHTML = `
@@ -192,17 +225,23 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("Click en guardar-editar detectado");
     e.preventDefault();
     //Determinamos que la fila que estamos editando es la padre más cercana al botón guardar en este caso
-    filaEditable = botonGuardar.closest("tr");
+    const filaEditable = botonGuardar.closest("tr");
     console.log("Fila detectada: ", filaEditable);
 
-    const nombre = filaEditable.querySelector(".input-nombre").value.trim();
-    const telefono = filaEditable.querySelector(".input-telefono").value.trim();
-    const email = filaEditable.querySelector(".input-email").value.trim();
+    const nombre = normalizarTextoMayusculas(
+      filaEditable.querySelector(".input-nombre").value.trim(),
+    );
+    const telefono = normalizarTelefono(
+      filaEditable.querySelector(".input-telefono").value.trim(),
+    );
+    const email = normalizarTextoMinusculas(
+      filaEditable.querySelector(".input-email").value.trim(),
+    );
     const id = filaEditable.dataset.id;
 
-    console.log("Datos leídos: ", {id, nombre, telefono, email})
+    console.log("Datos leídos: ", { id, nombre, telefono, email });
     //Para comprobar que se recibe correctamente el id del contacto en dataset del tr
-    console.log("ID del contacto: ",filaEditable.dataset.id);
+    console.log("ID del contacto: ", filaEditable.dataset.id);
 
     //Validaciones (igual que en nuevo contacto)
     if (!nombre) {
@@ -215,25 +254,36 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-  //Declaramos un nuevo "formulario"
-  const formDatos = new FormData();
-  //Metemos los datos en el "formularo" que acabamos de crear
-    formDatos.append("id",id);
-    formDatos.append("nombre",nombre);
-    formDatos.append("telefono",telefono);
-    formDatos.append("email",email);
+    //Lanzamos alerta si el teléfono no pasa la validación
+    if (telefono && !telefonoValido(telefono)) {
+      alert("El teléfono no tiene un formato válido.");
+      return;
+    }
+//Lanzamos alerta si el email no pasa la validación
+          if (email && !emailValido(email)) {
+        alert("El formato del email no es válido.");
+        return;
+      }
+
+    //Declaramos un nuevo "formulario"
+    const formDatos = new FormData();
+    //Metemos los datos en el "formularo" que acabamos de crear
+    formDatos.append("id", id);
+    formDatos.append("nombre", nombre);
+    formDatos.append("telefono", telefono);
+    formDatos.append("email", email);
 
     //Enviamos dicho formulario al php correspondiente
     fetch("editar.php", {
       method: "POST",
-      body: formDatos
-})
-})
-.then(response => response.text())
-.then(respuesta => {
-  if (respuesta.trim() === "ok") {
-      // Sustituir inputs por texto (guardado visual)
-  filaEditable.innerHTML = `
+      body: formDatos,
+    })
+      .then((response) => response.text())
+      .then((respuesta) => {
+        if (respuesta.trim() === "ok") {
+          
+          // Sustituir inputs por texto (guardado visual)
+          filaEditable.innerHTML = `
     <td class="celda-nombre">${nombre}</td>
     <td class="celda-telefono">${telefono}</td>
     <td class="celda-email">${email}</td>
@@ -242,16 +292,14 @@ document.addEventListener("DOMContentLoaded", () => {
       <button class="eliminar" type="button">Eliminar</button>
     </td>
   `;
-  } else {
-    alert("Error al guardar en la base de datos");
-    console.log("Error: ", $cons)
-  }
+        } else {
+          alert("Error al guardar en la base de datos");
+          console.log("Error: ", $cons);
+        }
+      });
 
-
-
-  // Limpiamos el estado de edición
-  //filaEditable.classList.remove("editando");
-
+    // Limpiamos el estado de edición
+    //filaEditable.classList.remove("editando");
   });
 
   //Animación para eliminar una fila existente
