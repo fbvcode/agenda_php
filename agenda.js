@@ -10,18 +10,18 @@ import {
 console.log("agenda.js cargado correctamente");
 
 document.addEventListener("DOMContentLoaded", () => {
-  const btnAdd = document.getElementById("boton-add");
+  const botonAniadir = document.getElementById("boton-add");
   const tbody = document.getElementById("agenda-body");
 
   //Evento escuchado: click en el botón "Agregar contacto"(ejecuta boque al hacer click)
-  btnAdd.addEventListener("click", () => {
+  botonAniadir.addEventListener("click", () => {
     // Crear la fila nueva
-    const newRow = document.createElement("tr"); // Crear una nueva fila (tr) para el nuevo contacto
+    const nuevaFila = document.createElement("tr"); // Crear una nueva fila (tr) para el nuevo contacto
 
-    newRow.classList.add("fila-nueva"); // Añadir clase para animación
+    nuevaFila.classList.add("fila-nueva"); // Añadir clase para animación
 
     //Dentro de la fila, se crean las celdas (td)
-    newRow.innerHTML = `
+    nuevaFila.innerHTML = `
             <td><input type="text" placeholder="Nombre" class="input-nombre"></td>
             <td><input type="text" placeholder="Teléfono" class="input-telefono"></td>
             <td><input type="text" placeholder="Email" class="input-email"></td>
@@ -32,18 +32,18 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
 
     // Agregar la nueva fila al cuerpo de la tabla
-    tbody.appendChild(newRow);
+    tbody.appendChild(nuevaFila);
     document.getElementById("agenda").classList.remove("agenda-vacia");
 
     //Localizamos el boton con clase "guardar-nuevo" dentro de la nueva fila
-    const btnGuardar = newRow.querySelector(".guardar-nuevo");
+    const btnGuardar = nuevaFila.querySelector(".guardar-nuevo");
 
     //Localizamos el boton con clase "cancelar-nuevo" dentro de la nueva fila
-    const btnCancelar = newRow.querySelector(".cancelar-nuevo");
+    const btnCancelar = nuevaFila.querySelector(".cancelar-nuevo");
     //Le asignamos un evento click para cancelar la creación del nuevo contacto
     btnCancelar.addEventListener("click", () => {
       //Animación de desvanecimiento antes de eliminar la fila
-      newRow.classList.add("ocultar");
+      nuevaFila.classList.add("ocultar");
 
       //Si le damos a cancelar, y era la única fila que había en la agenda,
       //le damos a la tabla la clase agenda-vacía para que desaparezca
@@ -54,20 +54,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
       //Elimina la fila después de la animación
       setTimeout(() => {
-        newRow.remove();
+        nuevaFila.remove();
       }, 400); // Duración de la animación (400ms)=0.4 seg
     });
 
     //y le asignamos un evento click para guardar el nuevo contacto
     btnGuardar.addEventListener("click", async () => {
       const nombre = normalizarTextoMayusculas(
-        newRow.querySelector(".input-nombre").value.trim(),
+        nuevaFila.querySelector(".input-nombre").value.trim(),
       );
       const telefono = normalizarTelefono(
-        newRow.querySelector(".input-telefono").value.trim(),
+        nuevaFila.querySelector(".input-telefono").value.trim(),
       );
       const email = normalizarTextoMinusculas(
-        newRow.querySelector(".input-email").value.trim(),
+        nuevaFila.querySelector(".input-email").value.trim(),
       );
 
       //El nombre es obligatorio
@@ -122,25 +122,17 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       //Reemplazar inputs → texto al guardar
-      newRow.innerHTML = `
+      nuevaFila.innerHTML = `
                 <td class="celda-nombre">${nombre}</td>
                 <td class="celda-telefono">${telefono}</td>
                 <td class="celda-email">${email}</td>
                 <td class='celda-acciones'>
-                    <form action='editar.php' method='POST'>
-                        <input type='hidden' name='id' value='${datos.id}'>
-                        <button class='editar' type='button'>Editar</button>
-                    </form>
-
-                    <form action='eliminar.php' method='POST'>
-                        <input type='hidden' name='id' value='${datos.id}'>
-                        <button class='eliminar' type='submit'
-                            onclick='return confirm("¿Seguro que quieres eliminar este contacto?")'>
-                            Eliminar
-                        </button>
-                    </form>
+                    <button class='editar' type='button'>Editar</button>
+        <button class='eliminar' type='button'>Eliminar</button>
                 </td>
             `;
+      //Colocamos el ID en el dataset de la fila
+      nuevaFila.dataset.id = datos.id;
     });
   });
 
@@ -216,7 +208,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   //Lógica para el botón guardar-editar
-  tbody.addEventListener("click", function (e) {
+  tbody.addEventListener("click", async function (e) {
     //Definimos el botón
     const botonGuardar = e.target.closest(".guardar-editar");
     //Si no encuentra el botón, sale de la función
@@ -259,11 +251,11 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("El teléfono no tiene un formato válido.");
       return;
     }
-//Lanzamos alerta si el email no pasa la validación
-          if (email && !emailValido(email)) {
-        alert("El formato del email no es válido.");
-        return;
-      }
+    //Lanzamos alerta si el email no pasa la validación
+    if (email && !emailValido(email)) {
+      alert("El formato del email no es válido.");
+      return;
+    }
 
     //Declaramos un nuevo "formulario"
     const formDatos = new FormData();
@@ -274,16 +266,16 @@ document.addEventListener("DOMContentLoaded", () => {
     formDatos.append("email", email);
 
     //Enviamos dicho formulario al php correspondiente
-    fetch("editar.php", {
+    const respuesta = await fetch("editar.php", {
       method: "POST",
       body: formDatos,
-    })
-      .then((response) => response.text())
-      .then((respuesta) => {
-        if (respuesta.trim() === "ok") {
-          
-          // Sustituir inputs por texto (guardado visual)
-          filaEditable.innerHTML = `
+    });
+    //Leemos la respuesta del PHP
+    const resultado = await respuesta.text();
+
+    if (resultado.trim() === "ok") {
+      // Sustituir inputs por texto (guardado visual)
+      filaEditable.innerHTML = `
     <td class="celda-nombre">${nombre}</td>
     <td class="celda-telefono">${telefono}</td>
     <td class="celda-email">${email}</td>
@@ -292,40 +284,76 @@ document.addEventListener("DOMContentLoaded", () => {
       <button class="eliminar" type="button">Eliminar</button>
     </td>
   `;
-        } else {
-          alert("Error al guardar en la base de datos");
-          console.log("Error: ", $cons);
-        }
-      });
+    } else {
+      alert("Error al guardar en la base de datos");
+      console.log("Error: ", $cons);
+    }
 
     // Limpiamos el estado de edición
     //filaEditable.classList.remove("editando");
   });
 
-  //Animación para eliminar una fila existente
-  document;
-  tbody.addEventListener("click", function (e) {
+  //Animación para eliminar una fila existente:
+  //Escuchamos el click en el cuerpo de la tabla
+  tbody.addEventListener("click", async function (e) {
+    //La pulsación ha sido en el botón eliminar?
     const boton = e.target.closest(".eliminar");
+
+    //Si no es el botón eliminar, ignoramos el click
     if (!boton) return;
 
     e.preventDefault();
 
-    const form = boton.closest("form");
+    //Localizamos la fila (tr) y su ID
     const fila = boton.closest("tr");
-    //Comprobamos si la fila que se elimina es la última que queda
-    const totalFilas = tbody.querySelectorAll("tr").length;
-    const esUltimaFila = totalFilas === 1;
+    const id = fila.dataset.id; //el id está en el dataset de la fila
 
-    fila.classList.add("fila-nueva");
-    fila.classList.add("ocultar");
+    //Hacemos que el usuario confirme la eliminación
+    if (!confirm("¿Seguro que quieres eliminar este contacto?")) return;
 
-    setTimeout(() => {
-      //Si es la última fila la que se está eliminando, le añadimos la clase agenda-vacía a la agenda
-      if (esUltimaFila) {
-        document.getElementById("agenda").classList.add("agenda-vacia");
+    //Preparamos el FormData para el PHP
+    const datosEnvio = new FormData();
+    datosEnvio.append("id", id); //Añadimos el id al FormData
+
+    try {
+      //Eviamos el formulario
+      const respuesta = await fetch(
+        //await: te esperas a tener la respuesta y luego sigues
+        "eliminar.php",
+        {
+          method: "POST",
+          body: datosEnvio,
+        },
+      );
+      //Leemos la respuesta del PHP
+      const resultado = await respuesta.text();
+
+      if (resultado.trim() === "ok") {
+        //Si el resultado es ok
+        fila.classList.add("ocultar"); //Le ponemos la clase para el efecto en CSS
+
+        setTimeout(() => {
+          fila.remove();
+
+          //Comprobamos si la agenda se ha quedado vacía
+          const filasEnTabla = tbody.getElementsByTagName("tr").length;
+          if (filasEnTabla === 0) {
+            document.getElementById("agenda").classList.add("agenda-vacia");
+
+            const mensaje = document.createElement("p");
+            mensaje.className = "no-contactos";
+            mensaje.textContent = "No hay contactos en la agenda.";
+
+            document.body.appendChild(mensaje);
+          }
+        }, 400);
+      } else {
+        //Si el resultado no es ok (hay error)
+        alert("Error en el servidor: No se pudo eliminar el contacto.");
       }
-
-      form.submit();
-    }, 400);
+    } catch (error) {
+      //Se atrapa el error y se muestra en consola
+      console.error("Error de conexión: ", error);
+    }
   });
 });

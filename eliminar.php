@@ -1,21 +1,28 @@
 <?php
 include("conexion.php");
 
-if(!isset($_POST['id'])) {
-    //Si alguien intenta acceder a esta página sin enviar un ID, lo redirigimos al index
-    header("Location: index.php");
-    exit();
-}
+//Verificamos que llega el ID
+if (isset($_POST['id'])) {
+    $id = $_POST['id'];
 
-$sql = "DELETE FROM contactos WHERE id = " . $_POST['id'];
-if ($conexion->query($sql) === TRUE) {
-    echo "Contacto eliminado exitosamente.";
+    //Preparamos la consulta sin el dato
+    $consulta = $conexion->prepare('DELETE FROM contactos WHERE id = ?');
+
+    //Le damos el dato a la consulta
+    $consulta->bind_param('i', $id);
+
+    //Ejecutamos la consulta
+    if ($consulta->execute()) {
+        echo 'ok'; //Respuesta para el JS
+    } else {
+        echo 'error_db';
+    }
+
+    //Cerramosel statement
+    $consulta->close();
 } else {
-    echo "Error: " . $sql . "<br>" . $conexion->error;
+    //Si no recibimos el ID (o alguien intenta entrar por donde no debe)
+    echo 'no_id'; // Le avisamos al JS que no llegó el ID
 }
-$conexion->query($sql);
-
 $conexion->close();
-header("Location: index.php");
 exit();
-?>

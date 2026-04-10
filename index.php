@@ -24,9 +24,9 @@
     $sql = "SELECT * FROM contactos ORDER BY nombre ASC";
     $resultado = $conexion->query($sql);
 
-//Si no hay contactos, le añadimos la clase "agenda-vacia" a la tabla
-$hayContactos = ($resultado->num_rows > 0);
-$claseTabla = $hayContactos ? "" : "agenda-vacia";
+    //Si no hay contactos, le añadimos la clase "agenda-vacia" a la tabla
+    $hayContactos = ($resultado->num_rows > 0);
+    $claseTabla = $hayContactos ? "" : "agenda-vacia";
 
     echo "<table id='agenda' class='$claseTabla'> 
         <thead> <!--fila de encabezado-->
@@ -52,17 +52,9 @@ $claseTabla = $hayContactos ? "" : "agenda-vacia";
 
 
             //Botón para editar contacto
-            echo "<form action='editar.php' method='post'>"; //Formulario para editar contacto
-            echo "<input type='hidden' name='id' value='" . $fila["id"] . "'>"; //Campo oculto con el ID del contacto
-            echo "<button class='editar' type='button'>Editar</button>"; //Botón para editar contacto
-            echo "</form>";
-            //Botón para eliminar contacto
-            echo "<form action='eliminar.php' method='post'>"; //Formulario para eliminar contacto
-            echo "<input type='hidden' name='id' value='" . $fila["id"] . "'>"; //Campo oculto con el ID del contacto           
-            echo "<button class='eliminar' type='submit' onclick='return confirm(\"¿Seguro que quieres eliminar este contacto?\")'>
-            Eliminar</button>";
-
-            echo "</form>";
+            echo "<button class='editar' type='button'>Editar</button>";
+            //Boton para eliminar contacto
+            echo "<button class='eliminar' type='button'>Eliminar</button>";
             echo "</td>";
             echo "</tr>";
         }
