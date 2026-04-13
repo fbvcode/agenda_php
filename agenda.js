@@ -5,16 +5,53 @@ import {
   normalizarTelefono,
   telefonoValido,
   emailValido,
+  formatearTelefono,
 } from "./helpers.js";
 
 console.log("agenda.js cargado correctamente");
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  /*
+    let estadoAgenda = "idle"; //idle = todavía no estoy haciendo nada
+
+  if (estadoAgenda !== "idle") return; //Si ya estoy en otro estado, salgo
+  try {
+  
+  estadoAgenda = "conectando";
+    const response = await fetch("ping.php", {
+      cache: "no-store"
+    })
+    if (!response.ok) {
+      throw new Error("Servidor no responde");
+    }
+
+    const texto = await response.text();
+
+    if (texto.trim() !== "ok") {
+      throw new Error("Respuesta inesperada")
+    }
+
+    //Si no entra en los errores, inicializamos la agenda
+    estadoAgenda = "iniciada";
+    iniciaragenda();
+  } catch (error) { //Ante alguna excepcion, bloqueamos la agenda
+   estadoagenda = "bloqueada";
+    bloquearAgenda();
+  }*/
   const botonAniadir = document.getElementById("boton-add");
   const tbody = document.getElementById("agenda-body");
 
+  let hayNuevoContactoAbierto = false;
+
   //Evento escuchado: click en el botón "Agregar contacto"(ejecuta boque al hacer click)
   botonAniadir.addEventListener("click", () => {
+    //Si ya hay una fila de nuevo contacto abierta, no hacemos nada
+    if (hayNuevoContactoAbierto) {
+      return;
+    }
+
+    //Si llegamos aquí, activamos el interruptor de nuevoContactoAbierto
+    hayNuevoContactoAbierto = true;
     // Crear la fila nueva
     const nuevaFila = document.createElement("tr"); // Crear una nueva fila (tr) para el nuevo contacto
 
@@ -35,6 +72,8 @@ document.addEventListener("DOMContentLoaded", () => {
     tbody.appendChild(nuevaFila);
     document.getElementById("agenda").classList.remove("agenda-vacia");
 
+    nuevaFila.querySelector(".input-nombre").focus()
+
     //Localizamos el boton con clase "guardar-nuevo" dentro de la nueva fila
     const btnGuardar = nuevaFila.querySelector(".guardar-nuevo");
 
@@ -42,6 +81,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnCancelar = nuevaFila.querySelector(".cancelar-nuevo");
     //Le asignamos un evento click para cancelar la creación del nuevo contacto
     btnCancelar.addEventListener("click", () => {
+      //si se cancela el nuevo contacto, se desactiva hayNuevoContacto
+      hayNuevoContactoAbierto = false;
       //Animación de desvanecimiento antes de eliminar la fila
       nuevaFila.classList.add("ocultar");
 
@@ -110,6 +151,9 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
+      //Si el contacto se guarda, desactivamos el interruptor hayNuevoContactoAbierto
+      hayNuevoContactoAbierto = false;
+
       //Si no hay errores, el contacto se ha guardado y, por lo tanto:
       //Quitamos la clase de agenda-vacia
       document.getElementById("agenda").classList.remove("agenda-vacia");
@@ -124,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
       //Reemplazar inputs → texto al guardar
       nuevaFila.innerHTML = `
                 <td class="celda-nombre">${nombre}</td>
-                <td class="celda-telefono">${telefono}</td>
+                <td class="celda-telefono">${formatearTelefono(telefono)}</td>
                 <td class="celda-email">${email}</td>
                 <td class='celda-acciones'>
                     <button class='editar' type='button'>Editar</button>
@@ -170,7 +214,7 @@ document.addEventListener("DOMContentLoaded", () => {
     //Reemplazamos el contenido por los inputs
     filaPulsada.innerHTML = `
     <td><input type="text" class="input-nombre" value="${nombre}"></td>
-    <td><input type="text" class="input-telefono" value="${telefono}"></td>
+    <td><input type="text" class="input-telefono" value="${formatearTelefono(telefono)}"></td>
     <td><input type="text" class="input-email" value="${email}"></td>
     <td class="celda-acciones">
       <button class="guardar-editar">Guardar</button>
@@ -277,7 +321,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Sustituir inputs por texto (guardado visual)
       filaEditable.innerHTML = `
     <td class="celda-nombre">${nombre}</td>
-    <td class="celda-telefono">${telefono}</td>
+    <td class="celda-telefono">${formatearTelefono(telefono)}</td>
     <td class="celda-email">${email}</td>
     <td class="celda-acciones">
       <button class="editar" type="button">Editar</button>
@@ -356,4 +400,11 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Error de conexión: ", error);
     }
   });
+  document.querySelectorAll(".celda-telefono").forEach((celda) => {
+  const telefono = celda.textContent.trim();
+
+  if (telefono) {
+    celda.textContent = formatearTelefono(telefono);
+  }
+});
 });
